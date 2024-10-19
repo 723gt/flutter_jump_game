@@ -1,8 +1,8 @@
 import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_mmo/games/jump_game.dart';
-import 'package:flutter_mmo/pages/game_over_page.dart';
-import 'package:flutter_mmo/pages/init_page.dart';
+import 'package:maid_jump_game/games/jump_game.dart';
+import 'package:maid_jump_game/pages/game_over_page.dart';
+import 'package:maid_jump_game/pages/init_page.dart';
 
 class JumpGamePage extends StatelessWidget {
   JumpGamePage({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mmo/pages/jump_game_page.dart';
+import 'package:maid_jump_game/pages/jump_game_page.dart';
 
 void main() {
   runApp(const MyApp());

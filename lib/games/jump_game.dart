@@ -7,8 +7,8 @@ import 'package:flame/game.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/widgets/focus_manager.dart';
-import 'package:flutter_mmo/components/bullet_component.dart';
-import 'package:flutter_mmo/components/maid_component.dart';
+import 'package:maid_jump_game/components/bullet_component.dart';
+import 'package:maid_jump_game/components/maid_component.dart';
 
 class JumpGame extends FlameGame
     with TapCallbacks, KeyboardEvents, HasCollisionDetection {

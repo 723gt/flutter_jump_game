@@ -1,4 +1,4 @@
-# flutter_mmo
+# maid_jump_game
 
 A new Flutter project.
 

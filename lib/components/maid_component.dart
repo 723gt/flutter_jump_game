@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/palette.dart';
-import 'package:flutter_mmo/components/bullet_component.dart';
-import 'package:flutter_mmo/games/jump_game.dart';
+import 'package:maid_jump_game/components/bullet_component.dart';
+import 'package:maid_jump_game/games/jump_game.dart';
 
 class MeidoComponent extends SpriteComponent
     with CollisionCallbacks, HasGameRef<JumpGame> {

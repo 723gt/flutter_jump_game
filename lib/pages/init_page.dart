@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_mmo/games/jump_game.dart';
+import 'package:maid_jump_game/games/jump_game.dart';
 
 class InitPage extends StatelessWidget {
   final JumpGame jumpGame;

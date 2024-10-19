@@ -1,7 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flutter_mmo/components/maid_component.dart';
-import 'package:flutter_mmo/games/jump_game.dart';
+import 'package:maid_jump_game/components/maid_component.dart';
+import 'package:maid_jump_game/games/jump_game.dart';
 
 class BulletComponent extends CircleComponent
     with CollisionCallbacks, HasGameRef<JumpGame> {
