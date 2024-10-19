@@ -14,11 +14,10 @@ class JumpGame extends FlameGame
     with TapCallbacks, KeyboardEvents, HasCollisionDetection {
   late final RouterComponent router;
   late MeidoComponent _myChar;
-  late double _bulletPos;
+  late int jumpCount = 0;
   @override
   Future<void> onLoad() async {
     final myCharSprite = await Sprite.load('meido01.png');
-    _bulletPos = size.x;
     _myChar = MeidoComponent(
         position: Vector2(100, size.y * 0.8),
         size: Vector2.all(size.x * 0.1),
@@ -27,12 +26,31 @@ class JumpGame extends FlameGame
     super.onLoad();
     add(ScreenHitbox());
     add(_myChar);
+    add(TimerComponent(
+        period: 5,
+        repeat: true,
+        onTick: () {
+          add(BulletComponent(position: Vector2(size.x - 30, size.y * 0.8)));
+        }));
+  }
+
+  @override
+  void onMount() {
+    super.onMount();
+    paused = true;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (_myChar.isGameOver) {
+      gameOver();
+    }
   }
 
   @override
   KeyEventResult onKeyEvent(
       KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    // TODO: implement onKeyEvent
     if (keysPressed.contains(LogicalKeyboardKey.keyW)) {
       final bullet =
           BulletComponent(position: Vector2(size.x - 30, size.y * 0.8));
@@ -45,5 +63,21 @@ class JumpGame extends FlameGame
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
     _myChar.jump();
+  }
+
+  void gameStart() async {
+    overlays.remove('init');
+    paused = false;
+    _myChar.gameStart();
+  }
+
+  void gameOver() {
+    paused = true;
+    overlays.add("gameOver");
+  }
+
+  void gameRestart() {
+    overlays.remove('gameOver');
+    overlays.add('init');
   }
 }

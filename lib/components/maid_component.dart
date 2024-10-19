@@ -13,6 +13,7 @@ class MeidoComponent extends SpriteComponent
   final double maxJump = 450.0;
   final double jumSpeed = 10;
   final double basePos;
+  late bool isGameOver = false;
   MeidoComponent(
       {super.position, super.size, super.sprite, required this.basePos})
       : super(
@@ -59,8 +60,15 @@ class MeidoComponent extends SpriteComponent
     _isJumpUp = true;
   }
 
-  void gameOver() {
-    removeFromParent();
-    // gameRef.overlays.add("game over!");
+  void gameStart() async {
+    final slimeSprite = await Sprite.load('meido01.png');
+    sprite = slimeSprite;
+    isGameOver = false;
+  }
+
+  void gameOver() async {
+    final slimeSprite = await Sprite.load('slime.png');
+    sprite = slimeSprite;
+    isGameOver = true;
   }
 }

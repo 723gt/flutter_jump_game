@@ -1,8 +1,10 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter_mmo/components/maid_component.dart';
+import 'package:flutter_mmo/games/jump_game.dart';
 
-class BulletComponent extends CircleComponent with CollisionCallbacks {
+class BulletComponent extends CircleComponent
+    with CollisionCallbacks, HasGameRef<JumpGame> {
   BulletComponent({super.position}) : super(radius: 10);
   bool hitFlag = false;
   @override
@@ -21,6 +23,11 @@ class BulletComponent extends CircleComponent with CollisionCallbacks {
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
     if (other is MeidoComponent) {
+      removeFromParent();
+    }
+
+    if (other is ScreenHitbox) {
+      gameRef.jumpCount++;
       removeFromParent();
     }
   }
