@@ -1,7 +1,14 @@
+import 'package:flame/flame.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:maid_jump_game/pages/jump_game_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // if (!kIsWeb) {
+  await Flame.device.setLandscape();
+  await Flame.device.fullScreen();
+  // }
   runApp(const MyApp());
 }
 

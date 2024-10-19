@@ -13,12 +13,12 @@ import 'package:maid_jump_game/components/maid_component.dart';
 class JumpGame extends FlameGame
     with TapCallbacks, KeyboardEvents, HasCollisionDetection {
   late final RouterComponent router;
-  late MeidoComponent _myChar;
+  late MaidComponent _myChar;
   late int jumpCount = 0;
   @override
   Future<void> onLoad() async {
     final myCharSprite = await Sprite.load('meido01.png');
-    _myChar = MeidoComponent(
+    _myChar = MaidComponent(
         position: Vector2(100, size.y * 0.8),
         size: Vector2.all(size.x * 0.1),
         sprite: myCharSprite,

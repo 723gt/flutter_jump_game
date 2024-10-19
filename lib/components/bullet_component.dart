@@ -22,7 +22,7 @@ class BulletComponent extends CircleComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    if (other is MeidoComponent) {
+    if (other is MaidComponent) {
       removeFromParent();
     }
 

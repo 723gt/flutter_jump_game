@@ -6,7 +6,7 @@ import 'package:flame/palette.dart';
 import 'package:maid_jump_game/components/bullet_component.dart';
 import 'package:maid_jump_game/games/jump_game.dart';
 
-class MeidoComponent extends SpriteComponent
+class MaidComponent extends SpriteComponent
     with CollisionCallbacks, HasGameRef<JumpGame> {
   late bool _isJump = false;
   late bool _isJumpUp = false;
@@ -14,7 +14,7 @@ class MeidoComponent extends SpriteComponent
   final double jumSpeed = 10;
   final double basePos;
   late bool isGameOver = false;
-  MeidoComponent(
+  MaidComponent(
       {super.position, super.size, super.sprite, required this.basePos})
       : super(
           anchor: Anchor.center,
@@ -40,7 +40,7 @@ class MeidoComponent extends SpriteComponent
       } else {
         position.y += jumSpeed;
         if (position.y >= gameRef.size.y * 0.8) {
-          position.y = gameRef.size.y * 0.8;
+          positionReset();
           _isJump = false;
         }
       }
@@ -67,8 +67,13 @@ class MeidoComponent extends SpriteComponent
   }
 
   void gameOver() async {
+    positionReset();
     final slimeSprite = await Sprite.load('slime.png');
     sprite = slimeSprite;
     isGameOver = true;
+  }
+
+  void positionReset() {
+    position.y = gameRef.size.y * 0.8;
   }
 }
