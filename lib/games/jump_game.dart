@@ -9,14 +9,43 @@ import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/widgets/focus_manager.dart';
 import 'package:maid_jump_game/components/bullet_component.dart';
 import 'package:maid_jump_game/components/maid_component.dart';
+import 'package:maid_jump_game/models/join_info.dart';
+import 'package:maid_jump_game/models/join_room.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class JumpGame extends FlameGame
     with TapCallbacks, KeyboardEvents, HasCollisionDetection {
   late final RouterComponent router;
   late MaidComponent _myChar;
   late int jumpCount = 0;
+  late IO.Socket socket;
+  final JoinRoom roomInfo = JoinRoom(roomId: "room01");
+  final JoinInfo joinInfo = JoinInfo(name: "hoge");
   @override
   Future<void> onLoad() async {
+    socket = IO.io(
+      "http://localhost:3000",
+      IO.OptionBuilder()
+          .setPath("/socket/")
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .build(),
+    );
+    socket.onConnect((_) {
+      socket.emit("join", roomInfo.toJson());
+      socket.emit("info", joinInfo.toJson());
+    });
+
+    socket.on("join", (params) {
+      print("join info");
+      print(params);
+    });
+
+    socket.on("user-join-info", (params) {
+      print("user-join-info");
+      print(params);
+    });
+    socket.connect();
     final myCharSprite = await Sprite.load('meido01.png');
     _myChar = MaidComponent(
         position: Vector2(100, size.y * 0.8),
@@ -79,5 +108,9 @@ class JumpGame extends FlameGame
   void gameRestart() {
     overlays.remove('gameOver');
     overlays.add('init');
+  }
+
+  void sendJumpCommand() {
+    socket.emit("jump");
   }
 }
