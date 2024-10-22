@@ -9,20 +9,31 @@ import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/widgets/focus_manager.dart';
 import 'package:maid_jump_game/components/bullet_component.dart';
 import 'package:maid_jump_game/components/maid_component.dart';
-import 'package:maid_jump_game/models/join_info.dart';
+import 'package:maid_jump_game/components/other_player_component.dart';
+import 'package:maid_jump_game/models/user_info.dart';
 import 'package:maid_jump_game/models/join_room.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:uuid/uuid.dart';
+import 'package:uuid/v4.dart';
 
 class JumpGame extends FlameGame
     with TapCallbacks, KeyboardEvents, HasCollisionDetection {
   late final RouterComponent router;
   late MaidComponent _myChar;
+  late MaidComponent otherPlayer;
   late int jumpCount = 0;
   late IO.Socket socket;
   final JoinRoom roomInfo = JoinRoom(roomId: "room01");
-  final JoinInfo joinInfo = JoinInfo(name: "hoge");
+  late UserInfo userInfo;
   @override
   Future<void> onLoad() async {
+    final myCharSprite = await Sprite.load('meido01.png');
+    otherPlayer = OtherPlayerComponent(
+        position: Vector2(100, size.y * 0.4),
+        size: Vector2.all(size.x * 0.1),
+        sprite: myCharSprite,
+        basePos: size.y * 0.4);
+    // サーバへ接続情報の設定
     socket = IO.io(
       "http://localhost:3000",
       IO.OptionBuilder()
@@ -31,9 +42,15 @@ class JumpGame extends FlameGame
           .disableAutoConnect()
           .build(),
     );
+    // サーバへの接続完了
     socket.onConnect((_) {
+      // roomへのjoin
       socket.emit("join", roomInfo.toJson());
-      socket.emit("info", joinInfo.toJson());
+      // roomにjoin後、サーバにclientIdを送信
+      const uuid = Uuid();
+      final clientId = uuid.v4();
+      userInfo = UserInfo(clientId: clientId);
+      socket.emit("info", userInfo.toJson());
     });
 
     socket.on("join", (params) {
@@ -41,12 +58,21 @@ class JumpGame extends FlameGame
       print(params);
     });
 
-    socket.on("user-join-info", (params) {
-      print("user-join-info");
-      print(params);
+    // 他プレイヤーのジャンプ情報
+    socket.on("user-jump", (params) {
+      if (isOtherUser(params)) {
+        otherPlayer.jump();
+      }
     });
+
+    // 他プレイヤーの接続情報
+    socket.on("user-join-info", (params) {
+      if (isJoinOtherPlayer(params)) {
+        add(otherPlayer);
+      }
+    });
+    // サーバに接続
     socket.connect();
-    final myCharSprite = await Sprite.load('meido01.png');
     _myChar = MaidComponent(
         position: Vector2(100, size.y * 0.8),
         size: Vector2.all(size.x * 0.1),
@@ -55,12 +81,18 @@ class JumpGame extends FlameGame
     super.onLoad();
     add(ScreenHitbox());
     add(_myChar);
-    add(TimerComponent(
-        period: 5,
-        repeat: true,
-        onTick: () {
-          add(BulletComponent(position: Vector2(size.x - 30, size.y * 0.8)));
-        }));
+
+    add(RectangleComponent(
+      position: Vector2(0, size.y * 0.5),
+      size: Vector2(size.x, 1),
+    ));
+
+    // add(TimerComponent(
+    //     period: 5,
+    //     repeat: true,
+    //     onTick: () {
+    //       add(BulletComponent(position: Vector2(size.x - 30, size.y * 0.8)));
+    //     }));
   }
 
   @override
@@ -111,6 +143,20 @@ class JumpGame extends FlameGame
   }
 
   void sendJumpCommand() {
+    // サーバへジャンプしたことの送信
     socket.emit("jump");
+  }
+
+  bool isJoinOtherPlayer(dynamic params) {
+    final listParams = List<Map<String, dynamic>>.from(params);
+    final userInfos = listParams.map((map) => UserInfo.fromJson(map)).toList();
+    final otherPlayers =
+        userInfos.where((item) => item.clientId != userInfo.clientId).toList();
+    return otherPlayers.isNotEmpty;
+  }
+
+  bool isOtherUser(dynamic params) {
+    final otherInfo = UserInfo.fromJson(params);
+    return userInfo.clientId != otherInfo.clientId;
   }
 }
