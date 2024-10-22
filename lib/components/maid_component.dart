@@ -8,8 +8,8 @@ import 'package:maid_jump_game/games/jump_game.dart';
 
 class MaidComponent extends SpriteComponent
     with CollisionCallbacks, HasGameRef<JumpGame> {
-  late bool _isJump = false;
-  late bool _isJumpUp = false;
+  late bool isJump = false;
+  late bool isJumpUp = false;
   final double maxJump = 450.0;
   final double jumSpeed = 10;
   final double basePos;
@@ -31,17 +31,17 @@ class MaidComponent extends SpriteComponent
   @override
   void update(double dt) {
     super.update(dt);
-    if (_isJump) {
-      if (_isJumpUp) {
+    if (isJump) {
+      if (isJumpUp) {
         position.y -= jumSpeed;
         if (position.y <= maxJump) {
-          _isJumpUp = false;
+          isJumpUp = false;
         }
       } else {
         position.y += jumSpeed;
         if (position.y >= gameRef.size.y * 0.8) {
           positionReset();
-          _isJump = false;
+          isJump = false;
         }
       }
     }
@@ -56,8 +56,8 @@ class MaidComponent extends SpriteComponent
   }
 
   void jump() {
-    _isJump = true;
-    _isJumpUp = true;
+    isJump = true;
+    isJumpUp = true;
   }
 
   void gameStart() async {
