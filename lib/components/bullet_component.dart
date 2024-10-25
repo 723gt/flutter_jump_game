@@ -1,12 +1,14 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:maid_jump_game/components/maid_component.dart';
+import 'package:maid_jump_game/components/other_player_component.dart';
 import 'package:maid_jump_game/games/jump_game.dart';
 
 class BulletComponent extends CircleComponent
     with CollisionCallbacks, HasGameRef<JumpGame> {
-  BulletComponent({super.position}) : super(radius: 10);
+  BulletComponent({super.position, this.isPlayer = true}) : super(radius: 10);
   bool hitFlag = false;
+  final bool isPlayer;
   @override
   Future<void> onLoad() async {
     super.onLoad();
@@ -22,12 +24,12 @@ class BulletComponent extends CircleComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    if (other is MaidComponent) {
+    if (other is MaidComponent && other is! OtherPlayerComponent) {
       removeFromParent();
     }
 
-    if (other is ScreenHitbox) {
-      gameRef.jumpCount++;
+    if (other is ScreenHitbox && isPlayer) {
+      gameRef.scoreCountUp();
       removeFromParent();
     }
   }

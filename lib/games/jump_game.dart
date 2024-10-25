@@ -20,7 +20,7 @@ class JumpGame extends FlameGame
     with TapCallbacks, KeyboardEvents, HasCollisionDetection {
   late final RouterComponent router;
   late MaidComponent _myChar;
-  late MaidComponent otherPlayer;
+  late OtherPlayerComponent otherPlayer;
   late int jumpCount = 0;
   late IO.Socket socket;
   final JoinRoom roomInfo = JoinRoom(roomId: "room01");
@@ -71,6 +71,22 @@ class JumpGame extends FlameGame
         add(otherPlayer);
       }
     });
+
+    socket.on('user-hit', (params) {
+      if (isOtherUser(params)) {
+        otherPlayer.gameOver();
+      }
+    });
+
+    socket.on("bullet", (params) {
+      print("bullet!");
+      add(BulletComponent(position: Vector2(size.x - 30, size.y * 0.8)));
+      add(BulletComponent(position: Vector2(size.x - 30, size.y * 0.4)));
+    });
+
+    socket.on('gameSet', (params) {
+      gameOver();
+    });
     // サーバに接続
     socket.connect();
     _myChar = MaidComponent(
@@ -86,13 +102,6 @@ class JumpGame extends FlameGame
       position: Vector2(0, size.y * 0.5),
       size: Vector2(size.x, 1),
     ));
-
-    // add(TimerComponent(
-    //     period: 5,
-    //     repeat: true,
-    //     onTick: () {
-    //       add(BulletComponent(position: Vector2(size.x - 30, size.y * 0.8)));
-    //     }));
   }
 
   @override
@@ -105,7 +114,7 @@ class JumpGame extends FlameGame
   void update(double dt) {
     super.update(dt);
     if (_myChar.isGameOver) {
-      gameOver();
+      playerHit();
     }
   }
 
@@ -115,7 +124,13 @@ class JumpGame extends FlameGame
     if (keysPressed.contains(LogicalKeyboardKey.keyW)) {
       final bullet =
           BulletComponent(position: Vector2(size.x - 30, size.y * 0.8));
+      final bullet2 = BulletComponent(
+          position: Vector2(size.x - 30, size.y * 0.4), isPlayer: false);
       add(bullet);
+      add(bullet2);
+    }
+    if (keysPressed.contains(LogicalKeyboardKey.space)) {
+      _myChar.jump();
     }
     return KeyEventResult.ignored;
   }
@@ -129,7 +144,14 @@ class JumpGame extends FlameGame
   void gameStart() async {
     overlays.remove('init');
     paused = false;
+    jumpCount = 0;
     _myChar.gameStart();
+    otherPlayer.gameStart();
+    socket.emit("start");
+  }
+
+  void playerHit() {
+    socket.emit("hit");
   }
 
   void gameOver() {
@@ -145,6 +167,12 @@ class JumpGame extends FlameGame
   void sendJumpCommand() {
     // サーバへジャンプしたことの送信
     socket.emit("jump");
+  }
+
+  void scoreCountUp() {
+    if (!_myChar.isGameOver) {
+      jumpCount++;
+    }
   }
 
   bool isJoinOtherPlayer(dynamic params) {

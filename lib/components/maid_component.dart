@@ -59,9 +59,11 @@ class MaidComponent extends SpriteComponent
   }
 
   void jump() {
-    isJump = true;
-    isJumpUp = true;
-    gameRef.sendJumpCommand();
+    if (!isGameOver) {
+      isJump = true;
+      isJumpUp = true;
+      gameRef.sendJumpCommand();
+    }
   }
 
   void gameStart() async {
