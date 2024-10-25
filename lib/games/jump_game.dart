@@ -56,6 +56,10 @@ class JumpGame extends FlameGame
           BulletComponent(position: Vector2(size.x - 30, size.y * 0.8));
       add(bullet);
     }
+
+    if (keysPressed.contains(LogicalKeyboardKey.space)) {
+      _myChar.jump();
+    }
     return KeyEventResult.ignored;
   }
 

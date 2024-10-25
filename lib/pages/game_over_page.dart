@@ -13,7 +13,7 @@ class GameOverPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("結果:${jumpGame.jumpCount}"),
+            Material(child: Text("結果:${jumpGame.jumpCount}")),
             ElevatedButton(
                 onPressed: () => jumpGame.gameRestart(),
                 child: const Text("Re Start")),
