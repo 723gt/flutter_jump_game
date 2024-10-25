@@ -17,20 +17,27 @@ class JumpGame extends FlameGame
   late int jumpCount = 0;
   @override
   Future<void> onLoad() async {
+    // プレイヤーキャラクターの画像を読み込み
     final myCharSprite = await Sprite.load('meido01.png');
+    // プレイヤーキャラクターのコンポーネント作成
     _myChar = MaidComponent(
         position: Vector2(100, size.y * 0.8),
         size: Vector2.all(size.x * 0.1),
         sprite: myCharSprite,
         basePos: size.y * 0.8);
     super.onLoad();
+    // 画面の当たり判定をゲームに追加
     add(ScreenHitbox());
+    // プレイヤーキャラクターをゲームに追加
     add(_myChar);
+    // 5秒ごとに球を発射するようにTimerComponentを追加
     add(TimerComponent(
         period: 5,
         repeat: true,
         onTick: () {
-          add(BulletComponent(position: Vector2(size.x - 30, size.y * 0.8)));
+          add(BulletComponent(
+              position:
+                  Vector2(size.x - 30, size.y * 0.8))); // 5秒ごとに球をゲームに追加c;;w
         }));
   }
 
@@ -43,6 +50,7 @@ class JumpGame extends FlameGame
   @override
   void update(double dt) {
     super.update(dt);
+    // プレイヤーキャラクターが玉に当たったていた場合ゲームオーバー画面に移行
     if (_myChar.isGameOver) {
       gameOver();
     }
@@ -57,6 +65,7 @@ class JumpGame extends FlameGame
       add(bullet);
     }
 
+    // スペースキーを押されたらキャラクターがジャンプ
     if (keysPressed.contains(LogicalKeyboardKey.space)) {
       _myChar.jump();
     }
@@ -65,22 +74,29 @@ class JumpGame extends FlameGame
 
   @override
   void onTapDown(TapDownEvent event) {
+    // クリックでもキャラクターがジャンプ
     super.onTapDown(event);
     _myChar.jump();
   }
 
   void gameStart() async {
+    // ゲームスタート画面を削除
     overlays.remove('init');
+    // ポーズを解除
     paused = false;
+    // キャラクターをゲームスタート状態へ
     _myChar.gameStart();
   }
 
   void gameOver() {
+    // ゲームのポーズを実行
     paused = true;
+    // ゲームオーバー画面をオーバーレイ
     overlays.add("gameOver");
   }
 
   void gameRestart() {
+    // ゲームオーバー画面からゲームスタート画面へ
     overlays.remove('gameOver');
     overlays.add('init');
   }
