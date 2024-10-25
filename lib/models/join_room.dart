@@ -1,3 +1,4 @@
+// roomIdのモデル
 class JoinRoom {
   final String roomId;
   JoinRoom({required this.roomId});

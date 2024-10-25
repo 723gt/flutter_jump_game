@@ -28,6 +28,7 @@ class JumpGame extends FlameGame
   @override
   Future<void> onLoad() async {
     final myCharSprite = await Sprite.load('meido01.png');
+    // 相手プレイヤーのコンポーネント準備
     otherPlayer = OtherPlayerComponent(
         position: Vector2(100, size.y * 0.4),
         size: Vector2.all(size.x * 0.1),
@@ -49,6 +50,7 @@ class JumpGame extends FlameGame
       // roomにjoin後、サーバにclientIdを送信
       const uuid = Uuid();
       final clientId = uuid.v4();
+      // 自身のidを設定、サーバに送信
       userInfo = UserInfo(clientId: clientId);
       socket.emit("info", userInfo.toJson());
     });
@@ -58,32 +60,38 @@ class JumpGame extends FlameGame
       print(params);
     });
 
-    // 他プレイヤーのジャンプ情報
+    // プレイヤーのジャンプ情報
     socket.on("user-jump", (params) {
+      // 他プレイヤーだった場合他のプレイヤーのジャンプを実行
       if (isOtherUser(params)) {
         otherPlayer.jump();
       }
     });
 
-    // 他プレイヤーの接続情報
+    // プレイヤーの接続情報
     socket.on("user-join-info", (params) {
+      // ほかプレイヤーだった場合相手プレイヤーのメイドをゲームに追加
       if (isJoinOtherPlayer(params)) {
         add(otherPlayer);
       }
     });
 
+    // プレイヤーが玉に当たった場合の通知
     socket.on('user-hit', (params) {
+      // 相手プレイヤーだった場合相手プレイヤー画像を差し変え
       if (isOtherUser(params)) {
         otherPlayer.gameOver();
       }
     });
 
+    // 球の発射を受信
     socket.on("bullet", (params) {
       print("bullet!");
       add(BulletComponent(position: Vector2(size.x - 30, size.y * 0.8)));
       add(BulletComponent(position: Vector2(size.x - 30, size.y * 0.4)));
     });
 
+    //ゲームが終わった場合 ゲームオーバ画面に繊維
     socket.on('gameSet', (params) {
       gameOver();
     });
@@ -114,6 +122,7 @@ class JumpGame extends FlameGame
   void update(double dt) {
     super.update(dt);
     if (_myChar.isGameOver) {
+      // 玉に当たった場合サーバへ当たったことを通知
       playerHit();
     }
   }
@@ -147,10 +156,12 @@ class JumpGame extends FlameGame
     jumpCount = 0;
     _myChar.gameStart();
     otherPlayer.gameStart();
+    // サーバへ準備完了を送信
     socket.emit("start");
   }
 
   void playerHit() {
+    // サーバへ球のヒットを送信
     socket.emit("hit");
   }
 

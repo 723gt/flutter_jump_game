@@ -1,5 +1,4 @@
-import 'package:uuid/uuid.dart';
-
+// サーバに送信するidを持つモデル
 class UserInfo {
   final String clientId;
   UserInfo({required this.clientId});
