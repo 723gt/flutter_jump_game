@@ -1,0 +1,58 @@
+# main
+
+./
+├── components
+│   ├── bullet_component.dart
+│   ├── jump_game_component.dart
+│   ├── maid_component.dart
+│   └── other_player_component.dart
+├── games
+│   └── jump_game.dart
+├── main.dart
+├── models
+│   ├── join_room.dart
+│   └── user_info.dart
+└── pages
+    ├── game_over_page.dart
+    ├── init_page.dart
+    └── jump_game_page.dart
+
+
+# 2nd
+./
+├── components
+│   ├── bullet_component.dart
+│   ├── jump_game_component.dart
+│   ├── maid_component.dart
+│   └── other_player_component.dart
+├── games
+│   └── jump_game.dart
+├── main.dart
+├── models
+│   ├── join_room.dart
+│   └── user_info.dart
+└── pages
+    ├── game_over_page.dart
+    ├── init_page.dart
+    └── jump_game_page.dart
+
+# single
+
+./
+├── components
+│   ├── bullet_component.dart
+│   └── maid_component.dart
+├── games
+│   └── jump_game.dart
+├── main.dart
+└── pages
+    ├── game_over_page.dart
+    ├── init_page.dart
+    └── jump_game_page.dart
+
+flutter --version
+
+Flutter 3.24.5 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision dec2ee5c1f (12 hours ago) • 2024-11-13 11:13:06 -0800
+Engine • revision a18df97ca5
+Tools • Dart 3.5.4 • DevTools 2.37.3
